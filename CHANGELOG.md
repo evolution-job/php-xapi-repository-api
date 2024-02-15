@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+0.4.1
+-----
+
+* added a `StateDocumentRepositoryInterface` that defines the public API of
+  a state document repository
+* added abstract base `WriteException` class: concrete classes exist for savings and
+  deletion operations
+
 0.4.0
 -----
 
