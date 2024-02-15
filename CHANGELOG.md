@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+0.4.1
+-----
+
+* added an `StateRepositoryInterface` that defines the public API of
+  a state repository
+
 0.4.0
 -----
 
