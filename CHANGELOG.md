@@ -1,14 +1,6 @@
 CHANGELOG
 =========
 
-0.4.1
------
-
-* added a `StateDocumentRepositoryInterface` that defines the public API of
-  a state document repository
-* added abstract base `WriteException` class: concrete classes exist for savings and
-  deletion operations
-
 0.4.0
 -----
 
@@ -20,6 +12,15 @@ CHANGELOG
 
 * added an `ActivityRepositoryInterface` that defines the public API of
   an activity repository
+
+* added a `StateDocumentRepositoryInterface` that defines the public API of
+  a state document repository
+
+* added abstract base `WriteException` class: concrete classes exist for savings and
+  deletion operations
+
+* added a `PersonRepositoryInterface` that defines the public API of
+  a person repository
 
 0.3.1
 -----
