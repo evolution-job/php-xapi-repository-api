@@ -10,19 +10,37 @@
             "homepage": "https://github.com/xabbuh"
         }
     ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/evolution-job/php-xapi-exception.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/evolution-job/php-xapi-model.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/evolution-job/php-xapi-test-fixtures.git"
+        }
+    ],
     "require": {
-        "php": "^7.0",
-        "ramsey/uuid": "^3.0",
-        "php-xapi/model": "^3.0",
-        "php-xapi/test-fixtures": "^1.0"
+        "php": "^8.1",
+        "ramsey/uuid": "^3.0 || ^4.0",
+        "php-xapi/model": "^3.3",
+        "php-xapi/test-fixtures": "^1.2"
     },
-    "minimum-stability": "dev",
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "minimum-stability": "stable",
     "conflict": {
         "xabbuh/xapi-storage-api": "*"
     },
     "autoload": {
         "psr-4": {
-            "XApi\\Repository\\Api\\": ""
+            "XApi\\Repository\\Api\\": "",
+            "XApi\\Repository\\Api\\Tests\\": "tests/"
         }
     },
     "extra": {

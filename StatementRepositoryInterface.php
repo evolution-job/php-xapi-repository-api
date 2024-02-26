@@ -35,7 +35,7 @@ interface StatementRepositoryInterface
      *
      * @throws NotFoundException if no Statement with the given UUID does exist
      */
-    public function findStatementById(StatementId $statementId, Actor $authority = null);
+    public function findStatementById(StatementId $statementId, Actor $authority = null): Statement;
 
     /**
      * Finds a voided {@link Statement} by id.
@@ -50,7 +50,7 @@ interface StatementRepositoryInterface
      * @throws NotFoundException if no voided Statement with the given UUID
      *                           does exist
      */
-    public function findVoidedStatementById(StatementId $voidedStatementId, Actor $authority = null);
+    public function findVoidedStatementById(StatementId $voidedStatementId, Actor $authority = null): Statement;
 
     /**
      * Finds a collection of {@link Statement Statements} filtered by the given
@@ -62,7 +62,7 @@ interface StatementRepositoryInterface
      *
      * @return Statement[] The statements
      */
-    public function findStatementsBy(StatementsFilter $criteria, Actor $authority = null);
+    public function findStatementsBy(StatementsFilter $criteria, Actor $authority = null): array;
 
     /**
      * Writes a {@link Statement} to the underlying data storage.
@@ -74,5 +74,5 @@ interface StatementRepositoryInterface
      *
      * @return StatementId The id of the created Statement
      */
-    public function storeStatement(Statement $statement, $flush = true);
+    public function storeStatement(Statement $statement, $flush = true): StatementId;
 }

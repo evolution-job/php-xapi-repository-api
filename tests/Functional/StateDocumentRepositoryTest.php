@@ -9,9 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace XApi\Repository\Api\Test\Functional;
+namespace XApi\Repository\Api\Tests\Functional;
 
 use PHPUnit\Framework\TestCase;
+use Xabbuh\XApi\Common\Exception\NotFoundException;
 use Xabbuh\XApi\DataFixtures\ActivityFixtures;
 use Xabbuh\XApi\DataFixtures\ActorFixtures;
 use Xabbuh\XApi\DataFixtures\DocumentFixtures;
@@ -24,31 +25,24 @@ use XApi\Repository\Api\StateDocumentRepositoryInterface;
  */
 abstract class StateDocumentRepositoryTest extends TestCase
 {
-    /**
-     * @var StateDocumentRepositoryInterface
-     */
-    private $stateDocumentRepository;
+    private StateDocumentRepositoryInterface $stateDocumentRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->stateDocumentRepository = $this->createStateDocumentRepositoryInterface();
         $this->cleanDatabase();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->cleanDatabase();
     }
 
-    /**
-     * @expectedException \Xabbuh\XApi\Common\Exception\NotFoundException
-     */
-    public function testFetchingNonExistingStateDocumentThrowsException()
+    public function testFetchingNonExistingStateDocumentThrowsException(): void
     {
+        $this->expectException(NotFoundException::class);
         $criteria = new StateDocumentsFilter();
-        $criteria
-            ->byActivity(ActivityFixtures::getIdActivity())
-            ->byAgent(ActorFixtures::getTypicalAgent());
+        $criteria->byActivity(ActivityFixtures::getIdActivity())->byAgent(ActorFixtures::getTypicalAgent());
 
         $this->stateDocumentRepository->find('unknown-state-id', $criteria);
     }
@@ -56,14 +50,12 @@ abstract class StateDocumentRepositoryTest extends TestCase
     /**
      * @dataProvider getStateDocument
      */
-    public function testCreatedStateDocumentCanBeRetrievedByOriginal(StateDocument $stateDocument)
+    public function testCreatedStateDocumentCanBeRetrievedByOriginal(StateDocument $stateDocument): void
     {
         $this->stateDocumentRepository->save($stateDocument);
 
         $criteria = new StateDocumentsFilter();
-        $criteria
-            ->byActivity($stateDocument->getState()->getActivity())
-            ->byAgent($stateDocument->getState()->getActor());
+        $criteria->byActivity($stateDocument->getState()->getActivity())->byAgent($stateDocument->getState()->getActor());
 
         $fetchedStateDocument = $this->stateDocumentRepository->find($stateDocument->getState()->getStateId(), $criteria);
 
@@ -76,17 +68,16 @@ abstract class StateDocumentRepositoryTest extends TestCase
 
     /**
      * @dataProvider getStateDocument
-     * @expectedException \Xabbuh\XApi\Common\Exception\NotFoundException
+     *
      */
-    public function testDeletedStateDocumentIsDeleted(StateDocument $stateDocument)
+    public function testDeletedStateDocumentIsDeleted(StateDocument $stateDocument): void
     {
+        $this->expectException(NotFoundException::class);
         $this->stateDocumentRepository->save($stateDocument);
         $this->stateDocumentRepository->delete($stateDocument);
 
         $criteria = new StateDocumentsFilter();
-        $criteria
-            ->byActivity($stateDocument->getState()->getActivity())
-            ->byAgent($stateDocument->getState()->getActor());
+        $criteria->byActivity($stateDocument->getState()->getActivity())->byAgent($stateDocument->getState()->getActor());
 
         $this->stateDocumentRepository->find($stateDocument->getState()->getStateId(), $criteria);
     }
@@ -94,15 +85,13 @@ abstract class StateDocumentRepositoryTest extends TestCase
     /**
      * @dataProvider getStateDocument
      */
-    public function testCommitSaveDeferredStateDocument(StateDocument $stateDocument)
+    public function testCommitSaveDeferredStateDocument(StateDocument $stateDocument): void
     {
         $this->stateDocumentRepository->saveDeferred($stateDocument);
         $this->stateDocumentRepository->commit();
 
         $criteria = new StateDocumentsFilter();
-        $criteria
-            ->byActivity($stateDocument->getState()->getActivity())
-            ->byAgent($stateDocument->getState()->getActor());
+        $criteria->byActivity($stateDocument->getState()->getActivity())->byAgent($stateDocument->getState()->getActor());
 
         $fetchedStateDocument = $this->stateDocumentRepository->find($stateDocument->getState()->getStateId(), $criteria);
 
@@ -115,25 +104,24 @@ abstract class StateDocumentRepositoryTest extends TestCase
 
     /**
      * @dataProvider getStateDocument
-     * @expectedException \Xabbuh\XApi\Common\Exception\NotFoundException
+     *
      */
-    public function testCommitDeleteDeferredStateDocument(StateDocument $stateDocument)
+    public function testCommitDeleteDeferredStateDocument(StateDocument $stateDocument): void
     {
+        $this->expectException(NotFoundException::class);
         $this->stateDocumentRepository->save($stateDocument);
         $this->stateDocumentRepository->deleteDeferred($stateDocument);
         $this->stateDocumentRepository->commit();
 
         $criteria = new StateDocumentsFilter();
-        $criteria
-            ->byActivity($stateDocument->getState()->getActivity())
-            ->byAgent($stateDocument->getState()->getActor());
+        $criteria->byActivity($stateDocument->getState()->getActivity())->byAgent($stateDocument->getState()->getActor());
 
         $this->stateDocumentRepository->find($stateDocument->getState()->getStateId(), $criteria);
     }
 
-    public function getStateDocument()
+    public function getStateDocument(): array
     {
-        return array(DocumentFixtures::getStateDocument());
+        return [DocumentFixtures::getStateDocument()];
     }
 
     abstract protected function createStateDocumentRepositoryInterface();

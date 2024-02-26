@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+0.4.1
+-----
+
+* dropped suppport for PHP < 8.1
+
 0.4.0
 -----
 

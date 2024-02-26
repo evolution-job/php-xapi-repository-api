@@ -9,9 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace XApi\Repository\Api\Test\Functional;
+namespace XApi\Repository\Api\Tests\Functional;
 
 use PHPUnit\Framework\TestCase;
+use Xabbuh\XApi\Common\Exception\NotFoundException;
+use Xabbuh\XApi\DataFixtures\ActivityFixtures;
 use Xabbuh\XApi\Model\Activity;
 use Xabbuh\XApi\Model\IRI;
 use XApi\Repository\Api\ActivityRepositoryInterface;
@@ -21,49 +23,44 @@ use XApi\Repository\Api\ActivityRepositoryInterface;
  */
 abstract class ActivityRepositoryTest extends TestCase
 {
-    /**
-     * @var ActivityRepositoryInterface
-     */
-    private $activityRepository;
+    private ActivityRepositoryInterface $activityRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->activityRepository = $this->createActivityRepository();
         $this->cleanDatabase();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->cleanDatabase();
     }
 
-    /**
-     * @expectedException \Xabbuh\XApi\Common\Exception\NotFoundException
-     */
-    public function testFetchingNonExistingActivityThrowsException()
+    public function testFetchingNonExistingActivityThrowsException(): void
     {
+        $this->expectException(NotFoundException::class);
         $this->activityRepository->findActivityById(IRI::fromString('not-existing'));
     }
 
     /**
-     * @dataProvider getStatementsWithId
+     * @dataProvider getActivitiesWithId
      */
-    public function testActivitiesCanBeRetrievedById(Activity $activity)
+    public function testActivitiesCanBeRetrievedById(Activity $activity): void
     {
         $fetchedActivity = $this->activityRepository->findActivityById($activity->getId());
 
         $this->assertTrue($activity->equals($fetchedActivity));
     }
 
-    public function getActivitiesWithId()
+    public function getActivitiesWithId(): array
     {
-        $fixtures = array();
+        $fixtures = [];
 
-        foreach (get_class_methods('Xabbuh\XApi\DataFixtures\ActivityFixtures') as $method) {
-            $activity = call_user_func(array('Xabbuh\XApi\DataFixtures\ActivityFixtures', $method));
+        foreach (get_class_methods(ActivityFixtures::class) as $method) {
+            $activity = call_user_func([ActivityFixtures::class, $method]);
 
             if ($activity instanceof Activity) {
-                $fixtures[$method] = array($activity);
+                $fixtures[$method] = [$activity];
             }
         }
 

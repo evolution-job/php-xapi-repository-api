@@ -28,5 +28,5 @@ interface PersonRepositoryInterface
      *
      * @return Person The related person
      */
-    public function findRelatedPersonTo(Agent $agent);
+    public function findRelatedPersonTo(Agent $agent): Person;
 }

@@ -31,5 +31,5 @@ interface ActivityRepositoryInterface
      *
      * @throws NotFoundException if no Activity with the given IRI does exist
      */
-    public function findActivityById(IRI $activityId);
+    public function findActivityById(IRI $activityId): Activity;
 }

@@ -27,14 +27,14 @@ interface StateDocumentRepositoryInterface
     /**
      * Finds a {@link StateDocument} by state id.
      *
-     * @param string               $stateId  The state id to filter by
+     * @param string $stateId  The state id to filter by
      * @param StateDocumentsFilter $criteria additional criteria to filter by
      *
-     * @throws NotFoundException if no State document with the given criterias does exist
-     *
      * @return StateDocument The state document
+     *@throws NotFoundException if no State document with the given criteria does exist
+     *
      */
-    public function find($stateId, StateDocumentsFilter $criteria);
+    public function find(string $stateId, StateDocumentsFilter $criteria): StateDocument;
 
     /**
      * Finds a collection of {@link StateDocument State documents} filtered by the given
@@ -44,7 +44,7 @@ interface StateDocumentRepositoryInterface
      *
      * @return StateDocument[] The state documents
      */
-    public function findBy(StateDocumentsFilter $criteria);
+    public function findBy(StateDocumentsFilter $criteria): array;
 
     /**
      * Writes a {@link StateDocument} to the underlying data storage.

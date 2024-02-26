@@ -15,7 +15,7 @@ interface StateRepositoryInterface
      * @return State The statement or null if no matching statement
      *                   has been found
      */
-    public function findState(array $criteria);
+    public function findState(array $criteria): ?State;
 
     /**
      * Writes a {@link Statement} to the underlying data storage.
@@ -27,5 +27,5 @@ interface StateRepositoryInterface
      *
      * @return State The id of the created Statement
      */
-    public function storeState(State $state, $flush = true);
+    public function storeState(State $state, bool $flush = true): void;
 }
