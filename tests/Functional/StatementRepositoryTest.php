@@ -9,82 +9,71 @@
  * file that was distributed with this source code.
  */
 
-namespace XApi\Repository\Api\Test\Functional;
+namespace XApi\Repository\Api\Tests\Functional;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Xabbuh\XApi\Common\Exception\NotFoundException;
 use Xabbuh\XApi\DataFixtures\StatementFixtures;
 use Xabbuh\XApi\Model\Statement;
 use Xabbuh\XApi\Model\StatementId;
-use XApi\Repository\Api\StatementRepository;
+use XApi\Repository\Api\StatementRepositoryInterface;
 
 /**
  * @author Christian Flothmann <christian.flothmann@xabbuh.de>
  */
 abstract class StatementRepositoryTest extends TestCase
 {
-    const UUID_REGEXP = '/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i';
+    public const UUID_REGEXP = '/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i';
 
-    /**
-     * @var StatementRepository
-     */
-    private $statementRepository;
+    private StatementRepositoryInterface $statementRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->statementRepository = $this->createStatementRepository();
         $this->cleanDatabase();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->cleanDatabase();
     }
 
-    /**
-     * @expectedException \Xabbuh\XApi\Common\Exception\NotFoundException
-     */
-    public function testFetchingNonExistingStatementThrowsException()
+    public function testFetchingNonExistingStatementThrowsException(): void
     {
+        $this->expectException(NotFoundException::class);
         $this->statementRepository->findStatementById(StatementId::fromString('12345678-1234-5678-8234-567812345678'));
     }
 
-    /**
-     * @expectedException \Xabbuh\XApi\Common\Exception\NotFoundException
-     */
-    public function testFetchingStatementAsVoidedStatementThrowsException()
+    public function testFetchingStatementAsVoidedStatementThrowsException(): void
     {
-        $statement = StatementFixtures::getTypicalStatement()->withId(null);
+        $this->expectException(NotFoundException::class);
+        $statement = StatementFixtures::getTypicalStatement()->withId();
         $statementId = $this->statementRepository->storeStatement($statement);
 
         $this->statementRepository->findVoidedStatementById($statementId);
     }
 
-    /**
-     * @dataProvider getStatementsWithoutId
-     */
-    public function testUuidIsGeneratedForNewStatementIfNotPresent(Statement $statement)
+    #[DataProvider('getStatementsWithoutId')]
+    public function testUuidIsGeneratedForNewStatementIfNotPresent(Statement $statement): void
     {
-        $statement = $statement->withId(null);
+        $statement = $statement->withId();
         $statementId = $this->statementRepository->storeStatement($statement);
 
         $this->assertNull($statement->getId());
-        $this->assertRegExp(self::UUID_REGEXP, $statementId->getValue());
+        $this->assertMatchesRegularExpression(self::UUID_REGEXP, $statementId->getValue());
     }
 
-    /**
-     * @dataProvider getStatementsWithId
-     */
-    public function testUuidIsNotGeneratedForNewStatementIfPresent(Statement $statement)
+    #[DataProvider('getStatementsWithId')]
+    public function testUuidIsNotGeneratedForNewStatementIfPresent(Statement $statement): void
     {
         $statementId = $this->statementRepository->storeStatement($statement);
 
         $this->assertEquals($statement->getId(), $statementId);
     }
 
-    /**
-     * @dataProvider getStatementsWithId
-     */
-    public function testCreatedStatementCanBeRetrievedByOriginalId(Statement $statement)
+    #[DataProvider('getStatementsWithId')]
+    public function testCreatedStatementCanBeRetrievedByOriginalId(Statement $statement): void
     {
         $this->statementRepository->storeStatement($statement);
 
@@ -97,12 +86,10 @@ abstract class StatementRepositoryTest extends TestCase
         $this->assertTrue($statement->equals($fetchedStatement));
     }
 
-    /**
-     * @dataProvider getStatementsWithoutId
-     */
-    public function testCreatedStatementCanBeRetrievedByGeneratedId(Statement $statement)
+    #[DataProvider('getStatementsWithoutId')]
+    public function testCreatedStatementCanBeRetrievedByGeneratedId(Statement $statement): void
     {
-        $statement  =$statement->withId(null);
+        $statement = $statement->withId();
         $statementId = $this->statementRepository->storeStatement($statement);
 
         if ($statement->getVerb()->isVoidVerb()) {
@@ -112,68 +99,64 @@ abstract class StatementRepositoryTest extends TestCase
         }
 
         $this->assertNull($statement->getId());
-        $this->assertTrue($statement->equals($fetchedStatement->withId(null)));
+        $this->assertTrue($statement->equals($fetchedStatement->withId()));
     }
 
-    public function getStatementsWithId()
+    public static function getStatementsWithId(): array
     {
-        $fixtures = array();
+        $fixtures = [];
 
-        foreach (get_class_methods('Xabbuh\XApi\DataFixtures\StatementFixtures') as $method) {
-            $statement = call_user_func(array('Xabbuh\XApi\DataFixtures\StatementFixtures', $method));
+        foreach (get_class_methods(StatementFixtures::class) as $method) {
+            $statement = call_user_func([StatementFixtures::class, $method]);
 
             if ($statement instanceof Statement) {
-                $fixtures[$method] = array($statement->withId(StatementId::fromString(StatementFixtures::DEFAULT_STATEMENT_ID)));
+                $fixtures[$method] = [$statement->withId(StatementId::fromString(StatementFixtures::DEFAULT_STATEMENT_ID))];
             }
         }
 
         return $fixtures;
     }
 
-    public function getStatementsWithoutId()
+    public static function getStatementsWithoutId(): array
     {
-        $fixtures = array();
+        $fixtures = [];
 
-        foreach (get_class_methods('Xabbuh\XApi\DataFixtures\StatementFixtures') as $method) {
-            $statement = call_user_func(array('Xabbuh\XApi\DataFixtures\StatementFixtures', $method));
+        foreach (get_class_methods(StatementFixtures::class) as $method) {
+            $statement = call_user_func([StatementFixtures::class, $method]);
 
             if ($statement instanceof Statement) {
-                $fixtures[$method] = array($statement->withId(null));
+                $fixtures[$method] = [$statement->withId()];
             }
         }
 
         return $fixtures;
     }
 
-    /**
-     * @expectedException \Xabbuh\XApi\Common\Exception\NotFoundException
-     */
-    public function testFetchingNonExistingVoidStatementThrowsException()
+    public function testFetchingNonExistingVoidStatementThrowsException(): void
     {
+        $this->expectException(NotFoundException::class);
         $this->statementRepository->findVoidedStatementById(StatementId::fromString('12345678-1234-5678-8234-567812345678'));
     }
 
-    /**
-     * @expectedException \Xabbuh\XApi\Common\Exception\NotFoundException
-     */
-    public function testFetchingVoidStatementAsStatementThrowsException()
+    public function testFetchingVoidStatementAsStatementThrowsException(): void
     {
-        $statement = StatementFixtures::getVoidingStatement()->withId(null);
+        $this->expectException(NotFoundException::class);
+        $statement = StatementFixtures::getVoidingStatement()->withId();
         $statementId = $this->statementRepository->storeStatement($statement);
 
         $this->statementRepository->findStatementById($statementId);
     }
 
-    public function testUuidIsGeneratedForNewVoidStatementIfNotPresent()
+    public function testUuidIsGeneratedForNewVoidStatementIfNotPresent(): void
     {
-        $statement = StatementFixtures::getVoidingStatement()->withId(null);
+        $statement = StatementFixtures::getVoidingStatement()->withId();
         $statementId = $this->statementRepository->storeStatement($statement);
 
         $this->assertNull($statement->getId());
-        $this->assertRegExp(self::UUID_REGEXP, $statementId->getValue());
+        $this->assertMatchesRegularExpression(self::UUID_REGEXP, $statementId->getValue());
     }
 
-    public function testUuidIsNotGeneratedForNewVoidStatementIfPresent()
+    public function testUuidIsNotGeneratedForNewVoidStatementIfPresent(): void
     {
         $statement = StatementFixtures::getVoidingStatement();
         $statementId = $this->statementRepository->storeStatement($statement);
@@ -181,7 +164,7 @@ abstract class StatementRepositoryTest extends TestCase
         $this->assertEquals($statement->getId(), $statementId);
     }
 
-    public function testCreatedVoidStatementCanBeRetrievedByOriginalId()
+    public function testCreatedVoidStatementCanBeRetrievedByOriginalId(): void
     {
         $statement = StatementFixtures::getVoidingStatement();
         $this->statementRepository->storeStatement($statement);
@@ -190,14 +173,14 @@ abstract class StatementRepositoryTest extends TestCase
         $this->assertTrue($statement->equals($fetchedStatement));
     }
 
-    public function testCreatedVoidStatementCanBeRetrievedByGeneratedId()
+    public function testCreatedVoidStatementCanBeRetrievedByGeneratedId(): void
     {
-        $statement = StatementFixtures::getVoidingStatement()->withId(null);
+        $statement = StatementFixtures::getVoidingStatement()->withId();
         $statementId = $this->statementRepository->storeStatement($statement);
         $fetchedStatement = $this->statementRepository->findVoidedStatementById($statementId);
 
         $this->assertNull($statement->getId());
-        $this->assertTrue($statement->equals($fetchedStatement->withId(null)));
+        $this->assertTrue($statement->equals($fetchedStatement->withId()));
     }
 
     abstract protected function createStatementRepository();

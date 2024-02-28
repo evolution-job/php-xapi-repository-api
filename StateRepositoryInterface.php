@@ -10,10 +10,7 @@ use Xabbuh\XApi\Model\State;
 interface StateRepositoryInterface
 {
     /**
-     * @param array $criteria
-     *
-     * @return State The statement or null if no matching statement
-     *                   has been found
+     * @return State The statement or null if no matching statement has been found
      */
     public function findState(array $criteria);
 
@@ -22,10 +19,8 @@ interface StateRepositoryInterface
      *
      * @param State $state The statement to store
      * @param bool $flush Whether or not to flush the managed objects
-     *                             immediately (i.e. write them to the data
-     *                             storage)
-     *
+     *                    immediately (i.e. write them to the data storage)
      * @return State The id of the created Statement
      */
-    public function storeState(State $state, $flush = true);
+    public function storeState(State $state, bool $flush = true);
 }

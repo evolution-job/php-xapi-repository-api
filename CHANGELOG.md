@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+0.5.0
+-----
+
+* dropped support for PHP < 8.1
+* dropped `2.x` releases of the `php-xapi/model` package
+* All dependencies from php-xapi/* are now loaded from forks at `https://github.com/evolution-job/`
+
 0.4.0
 -----
 

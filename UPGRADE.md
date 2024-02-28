@@ -1,6 +1,13 @@
 UPGRADE
 =======
 
+Upgrading from 0.4 to 0.5
+-------------------------
+
+* The requirements for `php-xapi/model` has been bumped to `^3.3` to make use
+  of stable release for PHP 8.
+
+
 Upgrading from 0.2 to 0.3
 -------------------------
 

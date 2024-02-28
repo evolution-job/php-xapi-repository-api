@@ -27,30 +27,26 @@ interface StateDocumentRepositoryInterface
     /**
      * Finds a {@link StateDocument} by state id.
      *
-     * @param string               $stateId  The state id to filter by
-     * @param StateDocumentsFilter $criteria additional criteria to filter by
-     *
-     * @throws NotFoundException if no State document with the given criterias does exist
-     *
+     * @param string $stateId The state id to filter by
+     * @param StateDocumentsFilter $stateDocumentsFilter additional criteria to filter by
      * @return StateDocument The state document
+     * @throws NotFoundException if no State document with the given criteria does exist
      */
-    public function find($stateId, StateDocumentsFilter $criteria);
+    public function find(string $stateId, StateDocumentsFilter $stateDocumentsFilter);
 
     /**
      * Finds a collection of {@link StateDocument State documents} filtered by the given
      * criteria.
      *
-     * @param StateDocumentsFilter $criteria The criteria to filter by
-     *
+     * @param StateDocumentsFilter $stateDocumentsFilter The criteria to filter by
      * @return StateDocument[] The state documents
      */
-    public function findBy(StateDocumentsFilter $criteria);
+    public function findBy(StateDocumentsFilter $stateDocumentsFilter): array;
 
     /**
      * Writes a {@link StateDocument} to the underlying data storage.
      *
      * @param StateDocument $stateDocument The state document to store
-     *
      * @throws SaveException When the saving failed
      */
     public function save(StateDocument $stateDocument);
@@ -66,7 +62,6 @@ interface StateDocumentRepositoryInterface
      * Delete a {@link StateDocument} from the underlying data storage.
      *
      * @param StateDocument $stateDocument The state document to delete
-     *
      * @throws DeleteException When the deletion failed
      */
     public function delete(StateDocument $stateDocument);

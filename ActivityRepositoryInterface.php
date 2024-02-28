@@ -25,11 +25,11 @@ interface ActivityRepositoryInterface
     /**
      * Finds an {@link Activity} by id.
      *
-     * @param IRI $activityId The activity id to filter by
+     * @param IRI $iri The activity id to filter by
      *
      * @return Activity The activity
      *
      * @throws NotFoundException if no Activity with the given IRI does exist
      */
-    public function findActivityById(IRI $activityId);
+    public function findActivityById(IRI $iri);
 }

@@ -11,9 +11,11 @@
 
 namespace XApi\Repository\Api\Exception;
 
+use Exception;
+
 /**
  * @author Jérôme Parmentier <jerome.parmentier@acensi.fr>
  */
-abstract class WriteException extends \Exception
+abstract class WriteException extends Exception
 {
 }
