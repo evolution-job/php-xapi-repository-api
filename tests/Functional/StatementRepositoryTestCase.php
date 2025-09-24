@@ -22,9 +22,9 @@ use XApi\Repository\Api\StatementRepositoryInterface;
 /**
  * @author Christian Flothmann <christian.flothmann@xabbuh.de>
  */
-abstract class StatementRepositoryTest extends TestCase
+abstract class StatementRepositoryTestCase extends TestCase
 {
-    public const UUID_REGEXP = '/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i';
+    public const string UUID_REGEXP = '/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i';
 
     private StatementRepositoryInterface $statementRepository;
 
@@ -60,7 +60,7 @@ abstract class StatementRepositoryTest extends TestCase
         $statement = $statement->withId();
         $statementId = $this->statementRepository->storeStatement($statement);
 
-        $this->assertNull($statement->getId());
+        $this->assertNotInstanceOf(StatementId::class, $statement->getId());
         $this->assertMatchesRegularExpression(self::UUID_REGEXP, $statementId->getValue());
     }
 
@@ -98,7 +98,7 @@ abstract class StatementRepositoryTest extends TestCase
             $fetchedStatement = $this->statementRepository->findStatementById($statementId);
         }
 
-        $this->assertNull($statement->getId());
+        $this->assertNotInstanceOf(StatementId::class, $statement->getId());
         $this->assertTrue($statement->equals($fetchedStatement->withId()));
     }
 
@@ -152,7 +152,7 @@ abstract class StatementRepositoryTest extends TestCase
         $statement = StatementFixtures::getVoidingStatement()->withId();
         $statementId = $this->statementRepository->storeStatement($statement);
 
-        $this->assertNull($statement->getId());
+        $this->assertNotInstanceOf(StatementId::class, $statement->getId());
         $this->assertMatchesRegularExpression(self::UUID_REGEXP, $statementId->getValue());
     }
 
@@ -179,7 +179,7 @@ abstract class StatementRepositoryTest extends TestCase
         $statementId = $this->statementRepository->storeStatement($statement);
         $fetchedStatement = $this->statementRepository->findVoidedStatementById($statementId);
 
-        $this->assertNull($statement->getId());
+        $this->assertNotInstanceOf(StatementId::class, $statement->getId());
         $this->assertTrue($statement->equals($fetchedStatement->withId()));
     }
 

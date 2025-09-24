@@ -10,17 +10,17 @@ use Xabbuh\XApi\Model\State;
 interface StateRepositoryInterface
 {
     /**
-     * @return State The statement or null if no matching statement has been found
+     * @param array $criteria
+     * @return State|null The state or null if no matching state has been found
      */
-    public function findState(array $criteria);
+    public function findState(array $criteria): ?State;
 
     /**
      * Writes a {@link Statement} to the underlying data storage.
      *
-     * @param State $state The statement to store
+     * @param State $state The state to store
      * @param bool $flush Whether or not to flush the managed objects
      *                    immediately (i.e. write them to the data storage)
-     * @return State The id of the created Statement
      */
-    public function storeState(State $state, bool $flush = true);
+    public function storeState(State $state, bool $flush = true): void;
 }
