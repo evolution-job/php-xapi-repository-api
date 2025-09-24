@@ -25,14 +25,14 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.4",
         "ramsey/uuid": "^4.0",
-        "php-xapi/model": "^3.0",
-        "php-xapi/test-fixtures": "^1.2"
+        "php-xapi/model": "^4.0",
+        "php-xapi/test-fixtures": "^1.3"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^11.0"
     },
     "minimum-stability": "stable",
     "conflict": {
@@ -40,13 +40,13 @@
     },
     "autoload": {
         "psr-4": {
-            "XApi\\Repository\\Api\\": "",
+            "XApi\\Repository\\Api\\": "src/",
             "XApi\\Repository\\Api\\Tests\\": "tests/"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.5.x-dev"
+            "dev-master": "0.6.x-dev"
         }
     }
 }

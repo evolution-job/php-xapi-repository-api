@@ -103,8 +103,6 @@ abstract class StateDocumentRepositoryTest extends TestCase
     abstract protected function cleanDatabase();
 
     /**
-     * @param StateDocument $stateDocument
-     * @return void
      * @throws NotFoundException
      */
     private function testStateDocument(StateDocument $stateDocument): void
