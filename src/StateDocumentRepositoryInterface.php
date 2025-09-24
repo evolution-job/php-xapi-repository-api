@@ -29,10 +29,10 @@ interface StateDocumentRepositoryInterface
      *
      * @param string $stateId The state id to filter by
      * @param StateDocumentsFilter $stateDocumentsFilter additional criteria to filter by
-     * @return StateDocument The state document
+     * @return StateDocument|null The state document
      * @throws NotFoundException if no State document with the given criteria does exist
      */
-    public function find(string $stateId, StateDocumentsFilter $stateDocumentsFilter);
+    public function find(string $stateId, StateDocumentsFilter $stateDocumentsFilter): ?StateDocument;
 
     /**
      * Finds a collection of {@link StateDocument State documents} filtered by the given

@@ -25,7 +25,7 @@ use XApi\Repository\Api\StateDocumentRepositoryInterface;
 /**
  * @author Jérôme Parmentier <jerome.parmentier@acensi.fr>
  */
-abstract class StateDocumentRepositoryTest extends TestCase
+abstract class StateDocumentRepositoryTestCase extends TestCase
 {
     private StateDocumentRepositoryInterface $stateDocumentRepository;
 
@@ -103,8 +103,6 @@ abstract class StateDocumentRepositoryTest extends TestCase
     abstract protected function cleanDatabase();
 
     /**
-     * @param StateDocument $stateDocument
-     * @return void
      * @throws NotFoundException
      */
     private function testStateDocument(StateDocument $stateDocument): void

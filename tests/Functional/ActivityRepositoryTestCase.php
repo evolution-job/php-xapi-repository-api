@@ -22,7 +22,7 @@ use XApi\Repository\Api\ActivityRepositoryInterface;
 /**
  * @author Jérôme Parmentier <jerome.parmentier@acensi.fr>
  */
-abstract class ActivityRepositoryTest extends TestCase
+abstract class ActivityRepositoryTestCase extends TestCase
 {
     private ActivityRepositoryInterface $activityRepository;
 

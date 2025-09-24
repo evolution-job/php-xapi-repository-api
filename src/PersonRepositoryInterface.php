@@ -26,7 +26,7 @@ interface PersonRepositoryInterface
      *
      * @param Agent $agent The agent to filter by
      *
-     * @return Person The related person
+     * @return Person|null The related person
      */
-    public function findRelatedPersonTo(Agent $agent);
+    public function findRelatedPersonTo(Agent $agent): ?Person;
 }
