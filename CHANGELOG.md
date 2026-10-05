@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+0.7.0
+-----
+
+* add a Profile repository API for Activity and Agent Profile document storage
+* support exclusive `since` timestamp filtering when retrieving States
+* preserve State document Content-Type through repository operations
+* exclude voided Statements from Statement list queries
+
 0.6.1
 -----
 

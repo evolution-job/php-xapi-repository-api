@@ -8,6 +8,10 @@
         {
             "name": "Christian Flothmann",
             "homepage": "https://github.com/xabbuh"
+        },
+        {
+            "name": "Entrili",
+            "homepage": "https://github.com/evolution-job"
         }
     ],
     "repositories": [
@@ -32,7 +36,7 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "phpunit/phpunit": "^11.0"
+        "phpunit/phpunit": "^13.1.6.0"
     },
     "minimum-stability": "stable",
     "conflict": {
