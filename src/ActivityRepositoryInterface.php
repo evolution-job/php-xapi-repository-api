@@ -23,7 +23,7 @@ use Xabbuh\XApi\Model\IRI;
 interface ActivityRepositoryInterface
 {
     /**
-     * Finds an {@link Activity} by id.
+     * Finds the repository's canonical {@link Activity} by id.
      *
      * @param IRI $iri The activity id to filter by
      *

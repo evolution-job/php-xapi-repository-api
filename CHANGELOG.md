@@ -1,6 +1,15 @@
 CHANGELOG
 =========
 
+0.6.1
+-----
+
+* add a Verb repository interface for retrieving canonical Verb displays
+* clarify that Activity repository lookups return the canonical Activity
+* statement repository implementations include statements that recursively
+  reference matches for non-time filters; time filters apply to each returned
+  statement
+
 0.6.0
 -----
 

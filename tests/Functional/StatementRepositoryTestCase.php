@@ -14,9 +14,12 @@ namespace XApi\Repository\Api\Tests\Functional;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Xabbuh\XApi\Common\Exception\NotFoundException;
+use Xabbuh\XApi\DataFixtures\ActivityFixtures;
 use Xabbuh\XApi\DataFixtures\StatementFixtures;
 use Xabbuh\XApi\Model\Statement;
 use Xabbuh\XApi\Model\StatementId;
+use Xabbuh\XApi\Model\StatementReference;
+use Xabbuh\XApi\Model\StatementsFilter;
 use XApi\Repository\Api\StatementRepositoryInterface;
 
 /**
@@ -181,6 +184,39 @@ abstract class StatementRepositoryTestCase extends TestCase
 
         $this->assertNotInstanceOf(StatementId::class, $statement->getId());
         $this->assertTrue($statement->equals($fetchedStatement->withId()));
+    }
+
+    public function testStatementsReferencingFilterMatchesAreIncludedRecursively(): void
+    {
+        $activity = ActivityFixtures::getTypicalActivity();
+        $target = StatementFixtures::getMinimalStatement('12345678-1234-5678-8234-567812345678')
+            ->withObject($activity);
+        $middle = StatementFixtures::getMinimalStatement('12345678-1234-5678-8234-567812345679')
+            ->withObject(new StatementReference($target->getId()));
+        $outer = StatementFixtures::getMinimalStatement('12345678-1234-5678-8234-567812345680')
+            ->withObject(new StatementReference($middle->getId()));
+
+        $this->statementRepository->storeStatement($target);
+        $this->statementRepository->storeStatement($middle);
+        $this->statementRepository->storeStatement($outer);
+
+        $statements = $this->statementRepository->findStatementsBy(
+            new StatementsFilter()
+                ->byActivity($activity)
+                ->ascending()
+                ->limit(10)
+        );
+        $statementIds = array_map(
+            static fn(Statement $statement): string => $statement->getId()->getValue(),
+            $statements
+        );
+
+        $this->assertCount(3, $statements);
+        $this->assertEqualsCanonicalizing([
+            $target->getId()->getValue(),
+            $middle->getId()->getValue(),
+            $outer->getId()->getValue(),
+        ], $statementIds);
     }
 
     abstract protected function createStatementRepository();

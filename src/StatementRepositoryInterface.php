@@ -51,6 +51,11 @@ interface StatementRepositoryInterface
      * Finds a collection of {@link Statement Statements} filtered by the given
      * criteria.
      *
+     * Non-time filters are also matched recursively against Statements that
+     * reference a matching Statement as their object. Time filters apply to
+     * each returned Statement, including Statements that reference another
+     * Statement.
+     *
      * @param StatementsFilter $statementsFilter The criteria to filter by
      * @param Actor|null $actor (Optional) actor that must be the
      *                                     authority of the returned statements
