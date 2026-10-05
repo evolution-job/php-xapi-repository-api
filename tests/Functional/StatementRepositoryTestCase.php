@@ -219,6 +219,36 @@ abstract class StatementRepositoryTestCase extends TestCase
         ], $statementIds);
     }
 
+    public function testStatementListsExcludeVoidedStatements(): void
+    {
+        $statement = StatementFixtures::getMinimalStatement('12345678-1234-5678-8234-567812345678');
+        $voidingStatement = StatementFixtures::getVoidingStatement(
+            '12345678-1234-5678-8234-567812345679',
+            $statement->getId()->getValue()
+        );
+        $referencingStatement = StatementFixtures::getMinimalStatement('12345678-1234-5678-8234-567812345680')
+            ->withObject(new StatementReference($statement->getId()));
+
+        $this->statementRepository->storeStatement($statement);
+        $this->statementRepository->storeStatement($voidingStatement);
+        $this->statementRepository->storeStatement($referencingStatement);
+
+        $statements = $this->statementRepository->findStatementsBy(
+            (new StatementsFilter())
+                ->byActivity(ActivityFixtures::getTypicalActivity())
+                ->ascending()
+                ->limit(10)
+        );
+        $statementIds = array_map(
+            static fn(Statement $statement): string => $statement->getId()->getValue(),
+            $statements
+        );
+
+        $this->assertNotContains($statement->getId()->getValue(), $statementIds);
+        $this->assertContains($voidingStatement->getId()->getValue(), $statementIds);
+        $this->assertContains($referencingStatement->getId()->getValue(), $statementIds);
+    }
+
     abstract protected function createStatementRepository();
 
     abstract protected function cleanDatabase();

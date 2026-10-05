@@ -55,6 +55,9 @@ interface StatementRepositoryInterface
      * reference a matching Statement as their object. Time filters apply to
      * each returned Statement, including Statements that reference another
      * Statement.
+     * Statements that have been voided are not returned; Statements that
+     * reference a voided Statement, including its voiding Statement, remain
+     * eligible for the result.
      *
      * @param StatementsFilter $statementsFilter The criteria to filter by
      * @param Actor|null $actor (Optional) actor that must be the
