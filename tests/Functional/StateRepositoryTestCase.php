@@ -11,6 +11,7 @@
 
 namespace XApi\Repository\Api\Tests\Functional;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Xabbuh\XApi\DataFixtures\ActivityFixtures;
 use Xabbuh\XApi\DataFixtures\ActorFixtures;
@@ -46,7 +47,7 @@ abstract class StateRepositoryTestCase extends TestCase
             'bookmark',
             '123456',
             ['progression' => 0.5]
-        );
+        )->withContentType('application/json; charset=utf-8');
 
         $this->stateRepository->storeState($state);
 
@@ -54,6 +55,23 @@ abstract class StateRepositoryTestCase extends TestCase
 
         $this->assertNotNull($fetchedState);
         $this->assertTrue($state->equals($fetchedState));
+    }
+
+    public function testRawStateDataIsNotDecodedAsJsonDuringRetrieval(): void
+    {
+        $state = StateFixtures::getCustomState(
+            ActivityFixtures::getTypicalActivity(),
+            ActorFixtures::getForQueryAccountAgent(),
+            'raw-document',
+            data: '123'
+        )->withContentType('text/plain');
+
+        $this->stateRepository->storeState($state);
+        $fetchedState = $this->stateRepository->findState($state);
+
+        self::assertNotNull($fetchedState);
+        self::assertSame('123', $fetchedState->getData());
+        self::assertSame('text/plain', $fetchedState->getContentType());
     }
 
     public function testCreatedStatesCanBeRetrievedByActivityAndAgentParameter(): void
@@ -88,6 +106,20 @@ abstract class StateRepositoryTestCase extends TestCase
 
         $this->assertTrue($state0->equals($states[0]));
         $this->assertTrue($state1->equals($states[1]));
+    }
+
+    public function testFindStatesExcludesStatesNotModifiedAfterSince(): void
+    {
+        $activity = ActivityFixtures::getTypicalActivity();
+        $agent = ActorFixtures::getForQueryAccountAgent();
+        $state = StateFixtures::getCustomState($activity, $agent, 'bookmark');
+
+        $this->stateRepository->storeState($state);
+
+        $this->assertCount(1, $this->stateRepository->findStates($state, new DateTimeImmutable('-1 day')));
+        $states = $this->stateRepository->findStates($state, new DateTimeImmutable('+1 day'));
+
+        $this->assertSame([], $states);
     }
 
     public function testFetchingNonExistingStateReturnNull(): void
@@ -133,7 +165,7 @@ abstract class StateRepositoryTestCase extends TestCase
             $state->getStateId(),
             $state->getRegistrationId(),
             ['progress' => 1]
-        );
+        )->withContentType('application/json; charset=utf-8');
 
         $this->stateRepository->storeState($updatedState);
 

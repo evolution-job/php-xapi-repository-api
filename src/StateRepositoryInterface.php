@@ -11,6 +11,7 @@
 
 namespace XApi\Repository\Api;
 
+use DateTimeImmutable;
 use Xabbuh\XApi\Model\State;
 
 /**
@@ -28,9 +29,10 @@ interface StateRepositoryInterface
 
     /**
      * @param State $state
+     * @param DateTimeImmutable|null $since Return only States modified strictly after this timestamp
      * @return array States if no matching states have been found
      */
-    public function findStates(State $state): array;
+    public function findStates(State $state, ?DateTimeImmutable $since = null): array;
 
     /**
      * @param State $state
